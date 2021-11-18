@@ -13,6 +13,7 @@ const socket = io.connect(host);
 socket.emit("getAll", { type: "pharmacy" });
 
 socket.on("order", (message) => {
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   console.log(`New Message >>> You have new order : ${message.payload}`);
   socket.emit("received", { id: message.id });
 });
@@ -31,18 +32,21 @@ socket.on("getDrug", (payload) => {
   };
 
   let message = {
-    messageBody: `We have your order - ${drug.name}`,
+    messageBody: `${drug.name}`,
   };
 
-  socket.emit("drug-detect", drug);
-  socket.emit("patientMsg", message);
+  setTimeout(() => {
+    socket.emit("drug-detect", drug);
+  }, 2000);
+  setTimeout(() => {
+    socket.emit("patientMsg", message);
+  }, 1000);
 });
 
-
-socket.on("post-delivered",(payload)=>{
+socket.on("post-delivered", (payload) => {
   let message = {
-    messageBody: `Thank you for purchase`,
+    messageBody: `Thank you for purchase. If you have any feedback please contact us`,
   };
 
   socket.emit("deliveredMsg", message);
-})
+});

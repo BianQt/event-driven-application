@@ -12,28 +12,35 @@ let msgQueue = {
 };
 
 clinic.on("connection", (socket) => {
-  console.log("Welcome to clinic server");
+  // console.log("Welcome to clinic server");
+  console.log("==================================================");
   console.log("Connecion", socket.id);
-
+  console.log("==================================================");
+  
   // To trigger connection
   socket.on("newPatient-detect", (payload) => {
     clinic.emit("newPatient", payload);
   });
 
   socket.on("patient-detect", (payload) => {
+    console.log("==================================================");
     console.log(`NEW PATIENT :`, { Time: new Date(), payload: payload });
+    console.log("==================================================");
     clinic.emit("getDrug", payload);
   });
 
   socket.on("drug-detect", (payload) => {
-    console.log(`NEW DRUG :`, { Time: new Date(), payload: payload });
+    console.log("==================================================");
+    console.log(`NEW ORDER :`, { Time: new Date(), payload: payload });
+    console.log("==================================================");
     clinic.emit("delivered", payload);
   });
 
   socket.on("delivered-detect", (payload) => {
-      console.log('=================',payload);
-   console.log(`Order Has Been Delivered :`, {Time: new Date(),payload: payload,});
-   clinic.emit("post-delivered", payload);
+    console.log("==================================================");
+    console.log(`Order Has Been Delivered :`, {Time: new Date(),payload: payload,});
+    console.log("==================================================");
+    clinic.emit("post-delivered", payload);
   })
 
   // =====================================================================
@@ -44,26 +51,25 @@ clinic.on("connection", (socket) => {
   socket.on("pharmacyMsg", (payload) => {
     const id = uuid();
     msgQueue.pharmacy[id] = payload.messageBody;
-    console.log("after adding New Order to Msg Q >>", msgQueue.pharmacy);
+    // console.log("after adding New Order to Msg Q >>", msgQueue.pharmacy);
     clinic.emit("order", { id: id, payload: msgQueue.pharmacy[id] });
   });
 
   // Add message to patient queue
   socket.on("patientMsg", (payload) => {
-    console.log("==================================================");
     const id = uuid();
     msgQueue.patient[id] = payload.messageBody;
-    console.log("after adding New Order to Msg Q >>", msgQueue.patient);
+    // console.log("after adding New Order to Msg Q >>", msgQueue.patient);
     clinic.emit("notification", { id: id, payload: msgQueue.patient[id] });
   });
 
 
   // Add message to patient queue
   socket.on("deliveredMsg", (payload) => {
-    console.log("==================================================");
+    // console.log("==================================================");
     const id = uuid();
     msgQueue.delivered[id] = payload.messageBody;
-    console.log("after adding New Order to Msg Q >>", msgQueue.delivered);
+    // console.log("after adding New Order to Msg Q >>", msgQueue.delivered);
     clinic.emit("thanks", { id: id, payload: msgQueue.delivered[id] });
   });
 
@@ -72,7 +78,7 @@ clinic.on("connection", (socket) => {
     delete msgQueue.pharmacy[payload.id];
     delete msgQueue.patient[payload.id];
     delete msgQueue.delivered[payload.id];
-    console.log("after deleting from Msg Q >>", msgQueue);
+    // console.log("after deleting from Msg Q >>", msgQueue);
   });
 
   socket.on("getAll", (payload) => {

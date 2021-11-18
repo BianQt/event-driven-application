@@ -2,12 +2,11 @@
 
 const io = require("socket.io-client");
 const faker = require("faker");
+const { random } = require("faker");
 
 let host = "http://localhost:8080/clinic";
 
 const socket = io.connect(host);
-
-
 
 // =====================================================================
 // Messages Queues
@@ -17,16 +16,18 @@ socket.emit("getAll", { type: "patient" });
 socket.emit("getAll", { type: "thanks" });
 
 socket.on("notification", (message) => {
-  console.log(`New Message >>> You Ordar has been rcieved : ${message.payload}`);
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+  console.log(
+    `New Message >>> You Order has been rcieved : ${message.payload}`
+  );
   socket.emit("received", { id: message.id });
 });
 
 socket.on("thanks", (message) => {
-    console.log(`New Message >>>  ${message.payload}`);
-    socket.emit("received", { id: message.id });
-  });
-  
-
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+  console.log(`New Message >>>  ${message.payload}`);
+  socket.emit("received", { id: message.id });
+});
 
 // =====================================================================
 // Dash board
@@ -40,6 +41,7 @@ socket.on("newPatient", (payload) => {
     messageBody: `I want this drug from ${payload.store}`,
     drug: faker.commerce.productName(),
     store: payload.store,
+    qty: Math.floor(Math.random() * 10),
   };
 
   let message = {
@@ -50,12 +52,8 @@ socket.on("newPatient", (payload) => {
   socket.emit("pharmacyMsg", message);
 });
 
-
 socket.on("delivered", (payload) => {
-    setTimeout(
-      () =>{
-          socket.emit('delivered-detect',payload);   
-      },
-      3000
-    );
-  });
+  setTimeout(() => {
+    socket.emit("delivered-detect", payload);
+  }, 3000);
+});

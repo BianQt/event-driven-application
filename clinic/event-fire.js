@@ -13,4 +13,4 @@ setInterval(() => {
   };
 
   socket.emit("newPatient-detect", newOrder);
-}, 5000);
+}, 6000);
